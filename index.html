@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASCII Artify - Image to ASCII Art Converter</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components/controls.css">
+  <link rel="stylesheet" href="css/components/preview.css">
+  <link rel="stylesheet" href="css/components/video.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1>ASCII Artify</h1>
+      <p class="subtitle">Convert images to ASCII art</p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Input Section -->
+      <section class="input-section">
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="fileInput" accept="image/*,video/*" hidden>
+          <div class="drop-zone-content">
+            <svg class="upload-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <p class="drop-zone-text">Drag & drop an image or video here or click to select</p>
+            <p class="drop-zone-hint">Supports JPG, PNG, GIF, WebP, MP4, WebM</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Video Controls (hidden by default) -->
+      <section class="video-controls" id="video-controls">
+        <div class="video-info" id="video-info"></div>
+
+        <div class="preview-slider-section">
+          <h3>Preview Frame</h3>
+          <div class="slider-container">
+            <input type="range" id="preview-slider">
+            <span id="preview-time">0:00</span>
+          </div>
+        </div>
+
+        <!-- Video Conversion Settings -->
+        <div class="video-settings-section">
+          <h3>Conversion Settings</h3>
+
+          <div class="control-group">
+            <label for="videoWidthSlider">ASCII Width:</label>
+            <div class="slider-container">
+              <input type="range" id="videoWidthSlider" min="20" max="300" value="100" step="1">
+              <span class="slider-value" id="videoWidthValue">100</span>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label for="videoCharSetInput">Character Set:</label>
+            <input type="text" id="videoCharSetInput" value=" .:-=+*#%@" placeholder="Enter character set">
+          </div>
+
+          <div class="video-settings-grid">
+            <div class="control-group">
+              <label for="videoColorModeSelect">Color Mode:</label>
+              <select id="videoColorModeSelect">
+                <option value="monochrome">Monochrome</option>
+                <option value="color">Color</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="videoConverterSelect">Converter:</label>
+              <select id="videoConverterSelect">
+                <option value="density">Density (Brightness)</option>
+                <option value="edge">Edge Detection</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Video Edge Detection Controls (shown only when Edge converter is selected) -->
+          <div id="videoEdgeControls" class="edge-controls" style="display: none;">
+            <div class="control-group">
+              <label for="videoCannyLowThreshold">Canny Low Threshold:</label>
+              <div class="slider-container">
+                <input type="range" id="videoCannyLowThreshold" min="0" max="255" value="50" step="1">
+                <span class="slider-value" id="videoCannyLowValue">50</span>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label for="videoCannyHighThreshold">Canny High Threshold:</label>
+              <div class="slider-container">
+                <input type="range" id="videoCannyHighThreshold" min="0" max="255" value="150" step="1">
+                <span class="slider-value" id="videoCannyHighValue">150</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="progress-section">
+          <h3>Progress</h3>
+          <div class="progress-container">
+            <div id="progress-bar"></div>
+            <span id="progress-text"></span>
+          </div>
+        </div>
+
+        <div class="video-actions">
+          <button id="convert-video-btn" class="btn btn-primary">Convert Video</button>
+          <button id="cancel-video-btn" class="btn btn-danger">Cancel</button>
+        </div>
+      </section>
+
+      <!-- Control Panel -->
+      <section class="control-section">
+        <div class="control-panel" id="controlPanel">
+          <div class="control-group">
+            <label for="widthSlider">ASCII Width:</label>
+            <div class="slider-container">
+              <input type="range" id="widthSlider" min="20" max="300" value="100" step="1">
+              <span class="slider-value" id="widthValue">100</span>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label for="charSetInput">Character Set:</label>
+            <input type="text" id="charSetInput" value=" .:-=+*#%@" placeholder="Enter character set">
+          </div>
+
+          <div class="control-group">
+            <label for="colorModeSelect">Color Mode:</label>
+            <select id="colorModeSelect">
+              <option value="monochrome">Monochrome</option>
+              <option value="color">Color</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="converterSelect">Converter:</label>
+            <select id="converterSelect">
+              <option value="density">Density (Brightness)</option>
+              <option value="edge">Edge Detection</option>
+            </select>
+          </div>
+
+          <!-- Edge Detection Controls (shown only when Edge converter is selected) -->
+          <div id="edgeControls" class="edge-controls" style="display: none;">
+            <div class="control-group">
+              <label for="cannyLowThreshold">Canny Low Threshold:</label>
+              <div class="slider-container">
+                <input type="range" id="cannyLowThreshold" min="0" max="255" value="50" step="1">
+                <span class="slider-value" id="cannyLowValue">50</span>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label for="cannyHighThreshold">Canny High Threshold:</label>
+              <div class="slider-container">
+                <input type="range" id="cannyHighThreshold" min="0" max="255" value="150" step="1">
+                <span class="slider-value" id="cannyHighValue">150</span>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label for="edgeCharSetInput">Edge Character Set:</label>
+              <input type="text" id="edgeCharSetInput" value="ILJTFYVCXZAHKNMBDPQRUWG@#%&" placeholder="Light to heavy chars">
+            </div>
+
+            <div class="control-group">
+              <label for="fillCharSetInput">Fill Character Set:</label>
+              <input type="text" id="fillCharSetInput" value=" .`',;:_-~&quot;<>+*^ilcstfvoabdeghknpqruymwxzj" placeholder="Small to large chars">
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button id="convertBtn" class="btn btn-primary" disabled>Convert to ASCII</button>
+            <button id="exportPngBtn" class="btn btn-secondary" disabled>Export as PNG</button>
+            <button id="exportTextBtn" class="btn btn-secondary" disabled>Export as Text</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Preview Section -->
+      <section class="preview-section">
+        <div class="preview-container" id="previewContainer">
+          <div class="preview-placeholder">
+            <p>Your ASCII art will appear here</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>ASCII Artify - Built with vanilla-adjacent JavaScript</p>
+    </footer>
+  </div>
+
+  <!-- Status Message -->
+  <div id="statusMessage" class="status-message hidden"></div>
+
+  <!-- Load application -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
