@@ -122,7 +122,9 @@ export default class EdgeDetectionConverter extends BaseConverter {
           const r = downsampledRGBA[index * 4];
           const g = downsampledRGBA[index * 4 + 1];
           const b = downsampledRGBA[index * 4 + 2];
-          color = `rgb(${r},${g},${b})`;
+          // Boost luminance for better visibility on dark background
+          const boosted = this.boostLuminance(r, g, b);
+          color = `rgb(${boosted.r},${boosted.g},${boosted.b})`;
         } else {
           // Monochrome mode uses white on black
           color = '#ffffff';

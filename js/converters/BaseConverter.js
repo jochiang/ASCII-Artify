@@ -83,4 +83,26 @@ export default class BaseConverter {
       a: imageData.data[index + 3]
     };
   }
+
+  /**
+   * Boost luminance of RGB color for better visibility on dark backgrounds
+   * @param {number} r - Red value (0-255)
+   * @param {number} g - Green value (0-255)
+   * @param {number} b - Blue value (0-255)
+   * @param {number} boost - Boost factor (default 1.5)
+   * @returns {Object} - { r, g, b } with boosted values
+   */
+  boostLuminance(r, g, b, boost = 1.5) {
+    // Boost RGB values while preserving color ratios
+    const maxVal = Math.max(r, g, b);
+
+    // If the pixel is very dark, boost more aggressively
+    const darkBoost = maxVal < 50 ? boost * 1.3 : boost;
+
+    return {
+      r: Math.min(255, Math.round(r * darkBoost)),
+      g: Math.min(255, Math.round(g * darkBoost)),
+      b: Math.min(255, Math.round(b * darkBoost))
+    };
+  }
 }

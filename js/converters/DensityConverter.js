@@ -50,7 +50,9 @@ export default class DensityConverter extends BaseConverter {
 
         // Store color if in color mode
         if (colorMode === 'color') {
-          colorRow.push(`rgb(${pixel.r}, ${pixel.g}, ${pixel.b})`);
+          // Boost luminance for better visibility on dark background
+          const boosted = this.boostLuminance(pixel.r, pixel.g, pixel.b);
+          colorRow.push(`rgb(${boosted.r}, ${boosted.g}, ${boosted.b})`);
         } else {
           // Monochrome mode uses white on black
           colorRow.push('#ffffff');
