@@ -26,21 +26,25 @@ A client-side web application that converts images and videos to ASCII art. Buil
 
 ## Quick Start
 
-### Option 1: Local Development
+### Live Demo
+Try it now at: **https://jochiang.github.io/ASCII-Artify/**
+
+Both image and video conversion work on the live site. The page uses a service worker to enable video processing in the browser.
+
+### Local Development
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ascii_artify.git
-cd ascii_artify
+git clone https://github.com/jochiang/ASCII-Artify.git
+cd ASCII-Artify
 
-# Start a local server (required for ES6 modules)
+# For image conversion only (simple server)
 python -m http.server 8080
 
-# Open in browser
-# Navigate to http://localhost:8080
+# For video conversion (requires CORS headers for SharedArrayBuffer)
+python server.py
 ```
 
-### Option 2: GitHub Pages
-Visit the live demo at: `https://yourusername.github.io/ascii_artify`
+**Note:** Video conversion requires `SharedArrayBuffer`, which needs specific CORS headers. The live GitHub Pages site handles this automatically via `coi-serviceworker`. For local development with video, use `server.py` which adds the required headers.
 
 ## Usage
 
