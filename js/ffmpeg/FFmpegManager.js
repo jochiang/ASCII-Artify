@@ -55,10 +55,12 @@ class FFmpegManager {
 
       // Load FFMPEG core from local files
       // classWorkerURL is needed to avoid cross-origin worker issues
+      // Convert relative paths to absolute URLs to avoid path resolution issues in workers
+      const baseURL = new URL('.', window.location.href).href;
       await this.ffmpeg.load({
-        coreURL: config.ffmpeg.coreURL,
-        wasmURL: config.ffmpeg.wasmURL,
-        classWorkerURL: config.ffmpeg.workerURL
+        coreURL: new URL(config.ffmpeg.coreURL, baseURL).href,
+        wasmURL: new URL(config.ffmpeg.wasmURL, baseURL).href,
+        classWorkerURL: new URL(config.ffmpeg.workerURL, baseURL).href
       });
 
       this.isLoaded = true;
