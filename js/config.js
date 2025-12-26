@@ -42,9 +42,9 @@ export default {
   // Note: Requires server with CORS headers for SharedArrayBuffer support
   // Use server.py instead of python -m http.server
   ffmpeg: {
-    coreURL: '/lib/ffmpeg/ffmpeg-core.js',
-    wasmURL: '/lib/ffmpeg/ffmpeg-core.wasm',
-    workerURL: '/lib/ffmpeg/worker.js'
+    coreURL: './lib/ffmpeg/ffmpeg-core.js',
+    wasmURL: './lib/ffmpeg/ffmpeg-core.wasm',
+    workerURL: './lib/ffmpeg/worker.js'
   },
 
   // Supported file types
