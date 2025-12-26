@@ -94,15 +94,6 @@ export default class InputHandler {
       return;
     }
 
-    // Validate file size (max 50MB for videos, 10MB for images)
-    const maxSize = this.isVideoFile(file) ? 50 * 1024 * 1024 : 10 * 1024 * 1024;
-    if (file.size > maxSize) {
-      EventBus.emit('input:error', {
-        message: `File is too large. Maximum size is ${this.isVideoFile(file) ? '50MB' : '10MB'}.`
-      });
-      return;
-    }
-
     this.currentFile = file;
 
     // Emit different events based on file type

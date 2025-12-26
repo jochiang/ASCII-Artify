@@ -115,6 +115,12 @@ body {
   color: var(--text-secondary);
 }
 
+.drop-zone-warning {
+  font-size: 0.8rem;
+  color: #ff9800;
+  margin-top: 10px;
+}
+
 /* Control Section */
 .control-section {
   width: 100%;
