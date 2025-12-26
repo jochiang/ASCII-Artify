@@ -6,25 +6,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ASCII Artify - A client-side web application that converts images and videos to ASCII art. Built with vanilla-adjacent JavaScript (pure JS + FFMPEG.wasm for video). Features two conversion algorithms: density-based and edge detection-based ASCII conversion.
 
+**Live Site**: https://jochiang.github.io/ASCII-Artify/
+
 ## Development Commands
 
 ### Local Testing
 ```bash
-# Start local HTTP server with CORS headers (required for video/FFMPEG.wasm)
+# For image conversion only (simple server)
+python -m http.server 8080
+
+# For video conversion (requires CORS headers for SharedArrayBuffer)
 python server.py
 
 # Then open http://localhost:8080 in browser
 ```
 
-**Important**: Use `server.py` instead of `python -m http.server` because FFMPEG.wasm requires `SharedArrayBuffer`, which needs specific CORS headers:
-- `Cross-Origin-Opener-Policy: same-origin`
-- `Cross-Origin-Embedder-Policy: credentialless`
-
 ### Deployment
+The app is deployed on GitHub Pages with full video support enabled via `coi-serviceworker.js`.
+
 ```bash
-# Deploy to GitHub Pages (after pushing to GitHub)
-# Enable Pages in repo settings → Source: main branch, root directory
-# Note: Video features may not work on GitHub Pages due to CORS header requirements
+git push origin master:main
+# GitHub Pages auto-deploys from main branch
 ```
 
 ## Architecture
@@ -33,6 +35,7 @@ python server.py
 ```
 ascii_artify/
 ├── index.html                 # Main application entry
+├── coi-serviceworker.js       # Enables SharedArrayBuffer on GitHub Pages
 ├── server.py                  # Local server with CORS headers
 ├── css/
 │   ├── main.css              # Base styles
@@ -87,18 +90,25 @@ Brightness-based ASCII conversion using a single character set ordered from ligh
 Uses Canny edge detection with dual-axis character selection:
 - **Edge pixels** → Uppercase characters (brightness-mapped): `ILJTFYVCXZAHKNMBDPQRUWG@#%&`
 - **Fill pixels** → Lowercase/punctuation (brightness-mapped): ` .'`,;:_-~"<>+*^ilcstfvoabdeghknpqruymwxzj`
-- **Color** → Sampled from downsampled image
+- **Color** → Sampled from downsampled image with luminance boost
 - **Darker pixels** → Smaller characters
 
 Configurable Canny thresholds (low: 50, high: 150 by default).
 
+### Color Mode Luminance Boost
+In color mode, RGB values are boosted for better visibility on black backgrounds:
+- **Normal colors**: 1.35x boost
+- **Very dark pixels** (max RGB < 50): 1.7x boost
+
+See `BaseConverter.boostLuminance()` method.
+
 ## Features
 
 ### Image Mode
-- Drag & drop or click to upload images
+- Drag & drop or click to upload images (no file size limit)
 - ASCII width control (20-300 characters)
 - Custom character set
-- Color mode (Monochrome/Color)
+- Color mode (Monochrome/Color) with luminance boost
 - Converter selection (Density/Edge Detection)
 - Canny threshold adjustment (Edge Detection mode)
 - Export as PNG or Text
@@ -111,23 +121,15 @@ Configurable Canny thresholds (low: 50, high: 150 by default).
 - Sequential frame processing with progress indicator
 - MP4 output with optional audio preservation
 
-## Current Status
+## GitHub Pages Video Support
 
-### Completed
-- Core infrastructure (EventBus, config, HTML/CSS)
-- DensityConverter (brightness-based)
-- EdgeDetectionConverter with Canny algorithm
-- Image processing pipeline with all settings
-- PNG and text export
-- Video support with FFMPEG.wasm
-- Video controls (width, charset, color mode, converter, audio toggle)
-- Video to ASCII conversion pipeline
-- MP4 encoding with audio support
+Video conversion works on GitHub Pages thanks to `coi-serviceworker.js`, which injects the required CORS headers via a service worker:
+- `Cross-Origin-Opener-Policy: same-origin`
+- `Cross-Origin-Embedder-Policy: require-corp`
 
-### Known Limitations
-- Video processing is sequential (no Web Workers) - can be slow for long videos
-- FFMPEG.wasm requires CORS headers - won't work on standard static hosts
-- Large videos may cause memory issues in the browser
+This enables `SharedArrayBuffer` which FFMPEG.wasm requires. The page reloads once on first visit to activate the service worker.
+
+FFmpegManager converts relative paths to absolute URLs to prevent path resolution issues in workers (see `js/ffmpeg/FFmpegManager.js`).
 
 ## Configuration
 Key settings in `js/config.js`:
@@ -136,25 +138,21 @@ Key settings in `js/config.js`:
 - `ascii.edgeDetection.defaultCannyHighThreshold`: 150
 - `video.maxFrameWidth`: 200
 - `video.targetFPS`: 24
-- `ffmpeg.coreURL`, `ffmpeg.wasmURL`, `ffmpeg.workerURL`: Local FFMPEG paths
+- `ffmpeg.coreURL`, `ffmpeg.wasmURL`, `ffmpeg.workerURL`: Relative FFMPEG paths (`./lib/ffmpeg/...`)
 
 ## Testing
 
-### Image Testing
-1. Start local server: `python server.py`
-2. Open http://localhost:8080
-3. Upload an image (drag-drop or click)
-4. Adjust settings (width, color mode, converter)
-5. Click "Convert to ASCII"
-6. Export as PNG or Text
+### Quick Test (Live Site)
+Visit https://jochiang.github.io/ASCII-Artify/ - both image and video conversion work.
 
-### Video Testing
-1. Start local server: `python server.py`
+### Local Image Testing
+1. Start simple server: `python -m http.server 8080`
+2. Open http://localhost:8080
+3. Upload an image and convert
+
+### Local Video Testing
+1. Start CORS server: `python server.py`
 2. Open http://localhost:8080
 3. Upload a video file (MP4/WebM)
-4. Adjust settings in the Conversion Settings panel
-5. Use preview slider to check different frames
-6. Toggle "Include Audio" if desired
-7. Click "Convert Video"
-8. Wait for extraction → conversion → encoding phases
-9. Video will auto-download when complete
+4. Adjust settings, click "Convert Video"
+5. Wait for extraction → conversion → encoding phases
