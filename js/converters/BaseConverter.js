@@ -89,18 +89,18 @@ export default class BaseConverter {
    * @param {number} r - Red value (0-255)
    * @param {number} g - Green value (0-255)
    * @param {number} b - Blue value (0-255)
+   * @param {number} boostFactor - Luminance multiplier (1.0 = no change)
    * @returns {Object} - { r, g, b } with boosted values
    */
-  boostLuminance(r, g, b) {
-    // Boost RGB values while preserving color ratios
-    // 1.35x for normal colors, 1.7x for very dark pixels
-    const maxVal = Math.max(r, g, b);
-    const boost = maxVal < 50 ? 1.7 : 1.35;
+  boostLuminance(r, g, b, boostFactor = 1.0) {
+    if (boostFactor === 1.0) {
+      return { r, g, b };
+    }
 
     return {
-      r: Math.min(255, Math.round(r * boost)),
-      g: Math.min(255, Math.round(g * boost)),
-      b: Math.min(255, Math.round(b * boost))
+      r: Math.min(255, Math.round(r * boostFactor)),
+      g: Math.min(255, Math.round(g * boostFactor)),
+      b: Math.min(255, Math.round(b * boostFactor))
     };
   }
 

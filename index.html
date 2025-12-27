@@ -85,13 +85,20 @@
             </div>
           </div>
 
-          <!-- Video Saturation Boost (only visible in color mode) -->
-          <div id="videoSaturationControls" class="saturation-controls" style="display: none;">
+          <!-- Video color adjustments (only visible in color mode) -->
+          <div id="videoColorControls" class="color-controls" style="display: none;">
             <div class="control-group">
-              <label for="videoSaturationSlider">Saturation Boost:</label>
+              <label for="videoSaturationSlider">Saturation:</label>
               <div class="slider-container">
                 <input type="range" id="videoSaturationSlider" min="0.5" max="2.0" value="1.0" step="0.1">
                 <span class="slider-value" id="videoSaturationValue">1.0x</span>
+              </div>
+            </div>
+            <div class="control-group">
+              <label for="videoLuminanceSlider">Luminance:</label>
+              <div class="slider-container">
+                <input type="range" id="videoLuminanceSlider" min="0.5" max="2.0" value="1.0" step="0.1">
+                <span class="slider-value" id="videoLuminanceValue">1.0x</span>
               </div>
             </div>
           </div>
@@ -154,13 +161,20 @@
             </select>
           </div>
 
-          <!-- Saturation Boost (only visible in color mode) -->
-          <div id="saturationControls" class="saturation-controls" style="display: none;">
+          <!-- Color adjustments (only visible in color mode) -->
+          <div id="colorControls" class="color-controls" style="display: none;">
             <div class="control-group">
-              <label for="saturationSlider">Saturation Boost:</label>
+              <label for="saturationSlider">Saturation:</label>
               <div class="slider-container">
                 <input type="range" id="saturationSlider" min="0.5" max="2.0" value="1.0" step="0.1">
                 <span class="slider-value" id="saturationValue">1.0x</span>
+              </div>
+            </div>
+            <div class="control-group">
+              <label for="luminanceSlider">Luminance:</label>
+              <div class="slider-container">
+                <input type="range" id="luminanceSlider" min="0.5" max="2.0" value="1.0" step="0.1">
+                <span class="slider-value" id="luminanceValue">1.0x</span>
               </div>
             </div>
           </div>

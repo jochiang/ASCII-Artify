@@ -24,10 +24,12 @@ export default class ControlPanel {
     this.edgeCharSetInput = document.getElementById('edgeCharSetInput');
     this.fillCharSetInput = document.getElementById('fillCharSetInput');
 
-    // Saturation boost controls
-    this.saturationControls = document.getElementById('saturationControls');
+    // Color adjustment controls
+    this.colorControls = document.getElementById('colorControls');
     this.saturationSlider = document.getElementById('saturationSlider');
     this.saturationValue = document.getElementById('saturationValue');
+    this.luminanceSlider = document.getElementById('luminanceSlider');
+    this.luminanceValue = document.getElementById('luminanceValue');
 
     this.init();
   }
@@ -49,13 +51,19 @@ export default class ControlPanel {
 
     // Color mode select
     this.colorModeSelect.addEventListener('change', () => {
-      this.toggleSaturationControls(this.colorModeSelect.value);
+      this.toggleColorControls(this.colorModeSelect.value);
       EventBus.emit('settings:changed', this.getSettings());
     });
 
     // Saturation slider
     this.saturationSlider.addEventListener('input', (e) => {
       this.saturationValue.textContent = `${e.target.value}x`;
+      EventBus.emit('settings:changed', this.getSettings());
+    });
+
+    // Luminance slider
+    this.luminanceSlider.addEventListener('input', (e) => {
+      this.luminanceValue.textContent = `${e.target.value}x`;
       EventBus.emit('settings:changed', this.getSettings());
     });
 
@@ -126,7 +134,8 @@ export default class ControlPanel {
       charSet: this.charSetInput.value || config.ascii.defaultCharSet,
       colorMode: this.colorModeSelect.value,
       converter: this.converterSelect.value,
-      saturationBoost: parseFloat(this.saturationSlider.value)
+      saturationBoost: parseFloat(this.saturationSlider.value),
+      luminanceBoost: parseFloat(this.luminanceSlider.value)
     };
 
     // Add edge detection settings if edge converter is selected
@@ -237,14 +246,14 @@ export default class ControlPanel {
   }
 
   /**
-   * Toggle saturation controls visibility
+   * Toggle color controls visibility
    * @param {string} colorMode - Selected color mode
    */
-  toggleSaturationControls(colorMode) {
+  toggleColorControls(colorMode) {
     if (colorMode === 'color') {
-      this.saturationControls.style.display = 'block';
+      this.colorControls.style.display = 'block';
     } else {
-      this.saturationControls.style.display = 'none';
+      this.colorControls.style.display = 'none';
     }
   }
 

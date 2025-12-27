@@ -367,11 +367,16 @@ class FFmpegManager {
       }
 
       // Video codec settings
+      // Use bt709 colorspace with sRGB transfer curve and full color range
       cmd.push(
         '-c:v', 'libx264',
-        '-preset', 'ultrafast',
+        '-preset', 'veryfast',
         '-crf', '23',
-        '-pix_fmt', 'yuv420p'
+        '-pix_fmt', 'yuv420p',
+        '-colorspace', 'bt709',
+        '-color_primaries', 'bt709',
+        '-color_trc', 'iec61966-2-1',
+        '-color_range', 'pc'
       );
 
       // Audio codec settings (if audio is included)

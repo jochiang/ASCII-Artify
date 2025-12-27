@@ -31,10 +31,12 @@ export default class VideoControls {
     this.cannyHighThreshold = null;
     this.cannyHighValue = null;
 
-    // Saturation boost controls
-    this.saturationControls = null;
+    // Color adjustment controls
+    this.colorControls = null;
     this.saturationSlider = null;
     this.saturationValue = null;
+    this.luminanceSlider = null;
+    this.luminanceValue = null;
 
     // Audio toggle
     this.audioToggle = null;
@@ -65,9 +67,11 @@ export default class VideoControls {
     this.cannyLowValue = document.getElementById('videoCannyLowValue');
     this.cannyHighThreshold = document.getElementById('videoCannyHighThreshold');
     this.cannyHighValue = document.getElementById('videoCannyHighValue');
-    this.saturationControls = document.getElementById('videoSaturationControls');
+    this.colorControls = document.getElementById('videoColorControls');
     this.saturationSlider = document.getElementById('videoSaturationSlider');
     this.saturationValue = document.getElementById('videoSaturationValue');
+    this.luminanceSlider = document.getElementById('videoLuminanceSlider');
+    this.luminanceValue = document.getElementById('videoLuminanceValue');
 
     // Setup slider event listener
     if (this.previewSlider) {
@@ -107,7 +111,7 @@ export default class VideoControls {
     // Color mode select
     if (this.colorModeSelect) {
       this.colorModeSelect.addEventListener('change', () => {
-        this._toggleSaturationControls(this.colorModeSelect.value);
+        this._toggleColorControls(this.colorModeSelect.value);
         this._emitSettingsChanged();
       });
     }
@@ -116,6 +120,14 @@ export default class VideoControls {
     if (this.saturationSlider) {
       this.saturationSlider.addEventListener('input', (e) => {
         this.saturationValue.textContent = `${e.target.value}x`;
+        this._emitSettingsChanged();
+      });
+    }
+
+    // Luminance slider
+    if (this.luminanceSlider) {
+      this.luminanceSlider.addEventListener('input', (e) => {
+        this.luminanceValue.textContent = `${e.target.value}x`;
         this._emitSettingsChanged();
       });
     }
@@ -168,13 +180,13 @@ export default class VideoControls {
   }
 
   /**
-   * Toggle saturation controls visibility
+   * Toggle color controls visibility
    * @private
    * @param {string} colorMode - Selected color mode
    */
-  _toggleSaturationControls(colorMode) {
-    if (this.saturationControls) {
-      this.saturationControls.style.display = colorMode === 'color' ? 'block' : 'none';
+  _toggleColorControls(colorMode) {
+    if (this.colorControls) {
+      this.colorControls.style.display = colorMode === 'color' ? 'block' : 'none';
     }
   }
 
@@ -189,6 +201,7 @@ export default class VideoControls {
       colorMode: this.colorModeSelect?.value || 'monochrome',
       converter: this.converterSelect?.value || 'density',
       saturationBoost: parseFloat(this.saturationSlider?.value || config.ascii.defaultSaturationBoost),
+      luminanceBoost: parseFloat(this.luminanceSlider?.value || config.ascii.defaultLuminanceBoost),
       includeAudio: this.includeAudio
     };
 
