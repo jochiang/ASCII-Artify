@@ -95,12 +95,19 @@ Uses Canny edge detection with dual-axis character selection:
 
 Configurable Canny thresholds (low: 50, high: 150 by default).
 
-### Color Mode Luminance Boost
-In color mode, RGB values are boosted for better visibility on black backgrounds:
+### Color Mode Enhancements
+In color mode, colors are enhanced for better visibility on black backgrounds:
+
+#### Saturation Boost (User-Adjustable)
+- Slider control (0.5x - 2.0x, default 1.0x)
+- Converts RGB → HSL, multiplies saturation, converts back
+- Applied before luminance boost
+- See `BaseConverter.boostSaturation()` method
+
+#### Luminance Boost (Automatic)
 - **Normal colors**: 1.35x boost
 - **Very dark pixels** (max RGB < 50): 1.7x boost
-
-See `BaseConverter.boostLuminance()` method.
+- See `BaseConverter.boostLuminance()` method
 
 ## Features
 
@@ -108,7 +115,7 @@ See `BaseConverter.boostLuminance()` method.
 - Drag & drop or click to upload images (no file size limit)
 - ASCII width control (20-300 characters)
 - Custom character set
-- Color mode (Monochrome/Color) with luminance boost
+- Color mode (Monochrome/Color) with saturation boost slider and luminance boost
 - Converter selection (Density/Edge Detection)
 - Canny threshold adjustment (Edge Detection mode)
 - Export as PNG or Text
@@ -134,6 +141,7 @@ FFmpegManager converts relative paths to absolute URLs to prevent path resolutio
 ## Configuration
 Key settings in `js/config.js`:
 - `ascii.defaultWidth`: 100
+- `ascii.defaultSaturationBoost`: 1.0 (range: 0.5-2.0)
 - `ascii.edgeDetection.defaultCannyLowThreshold`: 50
 - `ascii.edgeDetection.defaultCannyHighThreshold`: 150
 - `video.maxFrameWidth`: 200

@@ -9,6 +9,9 @@ export default {
     minWidth: 20,
     maxWidth: 300,
     colorModes: ['monochrome', 'color'],
+    defaultSaturationBoost: 1.0,  // 1.0 = no boost, 2.0 = double saturation
+    minSaturationBoost: 0.5,
+    maxSaturationBoost: 2.0,
 
     // Edge detection converter settings
     edgeDetection: {

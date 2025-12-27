@@ -103,4 +103,81 @@ export default class BaseConverter {
       b: Math.min(255, Math.round(b * boost))
     };
   }
+
+  /**
+   * Boost saturation of RGB color
+   * Converts to HSL, multiplies saturation, converts back to RGB
+   * @param {number} r - Red value (0-255)
+   * @param {number} g - Green value (0-255)
+   * @param {number} b - Blue value (0-255)
+   * @param {number} boostFactor - Saturation multiplier (1.0 = no change, 2.0 = double)
+   * @returns {Object} - { r, g, b } with boosted saturation
+   */
+  boostSaturation(r, g, b, boostFactor = 1.0) {
+    if (boostFactor === 1.0) {
+      return { r, g, b };
+    }
+
+    // Normalize RGB to 0-1
+    const rNorm = r / 255;
+    const gNorm = g / 255;
+    const bNorm = b / 255;
+
+    // Find min/max for HSL conversion
+    const max = Math.max(rNorm, gNorm, bNorm);
+    const min = Math.min(rNorm, gNorm, bNorm);
+    const delta = max - min;
+
+    // Calculate lightness
+    const l = (max + min) / 2;
+
+    // If grayscale, return as-is
+    if (delta === 0) {
+      return { r, g, b };
+    }
+
+    // Calculate saturation
+    let s = delta / (1 - Math.abs(2 * l - 1));
+
+    // Calculate hue
+    let h;
+    if (max === rNorm) {
+      h = ((gNorm - bNorm) / delta) % 6;
+    } else if (max === gNorm) {
+      h = (bNorm - rNorm) / delta + 2;
+    } else {
+      h = (rNorm - gNorm) / delta + 4;
+    }
+    h = h * 60;
+    if (h < 0) h += 360;
+
+    // Boost saturation (clamped to 0-1)
+    s = Math.min(1, Math.max(0, s * boostFactor));
+
+    // Convert back to RGB
+    const c = (1 - Math.abs(2 * l - 1)) * s;
+    const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+    const m = l - c / 2;
+
+    let rOut, gOut, bOut;
+    if (h < 60) {
+      rOut = c; gOut = x; bOut = 0;
+    } else if (h < 120) {
+      rOut = x; gOut = c; bOut = 0;
+    } else if (h < 180) {
+      rOut = 0; gOut = c; bOut = x;
+    } else if (h < 240) {
+      rOut = 0; gOut = x; bOut = c;
+    } else if (h < 300) {
+      rOut = x; gOut = 0; bOut = c;
+    } else {
+      rOut = c; gOut = 0; bOut = x;
+    }
+
+    return {
+      r: Math.round((rOut + m) * 255),
+      g: Math.round((gOut + m) * 255),
+      b: Math.round((bOut + m) * 255)
+    };
+  }
 }

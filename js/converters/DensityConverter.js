@@ -12,7 +12,7 @@ export default class DensityConverter extends BaseConverter {
    * @returns {Object} - { chars: string[][], colors: string[][] }
    */
   convert(imageData, options) {
-    const { charSet, width, colorMode } = options;
+    const { charSet, width, colorMode, saturationBoost = 1.0 } = options;
 
     // Calculate ASCII grid dimensions
     const aspectRatio = imageData.height / imageData.width;
@@ -50,8 +50,9 @@ export default class DensityConverter extends BaseConverter {
 
         // Store color if in color mode
         if (colorMode === 'color') {
-          // Boost luminance for better visibility on dark background
-          const boosted = this.boostLuminance(pixel.r, pixel.g, pixel.b);
+          // Apply saturation boost, then luminance boost for better visibility
+          const saturated = this.boostSaturation(pixel.r, pixel.g, pixel.b, saturationBoost);
+          const boosted = this.boostLuminance(saturated.r, saturated.g, saturated.b);
           colorRow.push(`rgb(${boosted.r}, ${boosted.g}, ${boosted.b})`);
         } else {
           // Monochrome mode uses white on black

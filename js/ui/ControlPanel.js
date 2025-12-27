@@ -24,6 +24,11 @@ export default class ControlPanel {
     this.edgeCharSetInput = document.getElementById('edgeCharSetInput');
     this.fillCharSetInput = document.getElementById('fillCharSetInput');
 
+    // Saturation boost controls
+    this.saturationControls = document.getElementById('saturationControls');
+    this.saturationSlider = document.getElementById('saturationSlider');
+    this.saturationValue = document.getElementById('saturationValue');
+
     this.init();
   }
 
@@ -44,6 +49,13 @@ export default class ControlPanel {
 
     // Color mode select
     this.colorModeSelect.addEventListener('change', () => {
+      this.toggleSaturationControls(this.colorModeSelect.value);
+      EventBus.emit('settings:changed', this.getSettings());
+    });
+
+    // Saturation slider
+    this.saturationSlider.addEventListener('input', (e) => {
+      this.saturationValue.textContent = `${e.target.value}x`;
       EventBus.emit('settings:changed', this.getSettings());
     });
 
@@ -113,7 +125,8 @@ export default class ControlPanel {
       width: parseInt(this.widthSlider.value),
       charSet: this.charSetInput.value || config.ascii.defaultCharSet,
       colorMode: this.colorModeSelect.value,
-      converter: this.converterSelect.value
+      converter: this.converterSelect.value,
+      saturationBoost: parseFloat(this.saturationSlider.value)
     };
 
     // Add edge detection settings if edge converter is selected
@@ -220,6 +233,18 @@ export default class ControlPanel {
       this.edgeControls.style.display = 'block';
     } else {
       this.edgeControls.style.display = 'none';
+    }
+  }
+
+  /**
+   * Toggle saturation controls visibility
+   * @param {string} colorMode - Selected color mode
+   */
+  toggleSaturationControls(colorMode) {
+    if (colorMode === 'color') {
+      this.saturationControls.style.display = 'block';
+    } else {
+      this.saturationControls.style.display = 'none';
     }
   }
 

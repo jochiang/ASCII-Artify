@@ -31,6 +31,11 @@ export default class VideoControls {
     this.cannyHighThreshold = null;
     this.cannyHighValue = null;
 
+    // Saturation boost controls
+    this.saturationControls = null;
+    this.saturationSlider = null;
+    this.saturationValue = null;
+
     // Audio toggle
     this.audioToggle = null;
     this.includeAudio = true;
@@ -60,6 +65,9 @@ export default class VideoControls {
     this.cannyLowValue = document.getElementById('videoCannyLowValue');
     this.cannyHighThreshold = document.getElementById('videoCannyHighThreshold');
     this.cannyHighValue = document.getElementById('videoCannyHighValue');
+    this.saturationControls = document.getElementById('videoSaturationControls');
+    this.saturationSlider = document.getElementById('videoSaturationSlider');
+    this.saturationValue = document.getElementById('videoSaturationValue');
 
     // Setup slider event listener
     if (this.previewSlider) {
@@ -99,6 +107,15 @@ export default class VideoControls {
     // Color mode select
     if (this.colorModeSelect) {
       this.colorModeSelect.addEventListener('change', () => {
+        this._toggleSaturationControls(this.colorModeSelect.value);
+        this._emitSettingsChanged();
+      });
+    }
+
+    // Saturation slider
+    if (this.saturationSlider) {
+      this.saturationSlider.addEventListener('input', (e) => {
+        this.saturationValue.textContent = `${e.target.value}x`;
         this._emitSettingsChanged();
       });
     }
@@ -151,6 +168,17 @@ export default class VideoControls {
   }
 
   /**
+   * Toggle saturation controls visibility
+   * @private
+   * @param {string} colorMode - Selected color mode
+   */
+  _toggleSaturationControls(colorMode) {
+    if (this.saturationControls) {
+      this.saturationControls.style.display = colorMode === 'color' ? 'block' : 'none';
+    }
+  }
+
+  /**
    * Get current settings
    * @returns {Object}
    */
@@ -160,6 +188,7 @@ export default class VideoControls {
       charSet: this.charSetInput?.value || config.ascii.defaultCharSet,
       colorMode: this.colorModeSelect?.value || 'monochrome',
       converter: this.converterSelect?.value || 'density',
+      saturationBoost: parseFloat(this.saturationSlider?.value || config.ascii.defaultSaturationBoost),
       includeAudio: this.includeAudio
     };
 

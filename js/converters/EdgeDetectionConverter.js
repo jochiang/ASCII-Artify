@@ -49,7 +49,8 @@ export default class EdgeDetectionConverter extends BaseConverter {
       fillCharSet = ' .`\',;:_-~"<>+*^ilcstfvoabdeghknpqruymwxzj',
       cannyLowThreshold = 50,
       cannyHighThreshold = 150,
-      colorMode = 'monochrome'
+      colorMode = 'monochrome',
+      saturationBoost = 1.0
     } = options;
 
     const { width: imgWidth, height: imgHeight, data } = imageData;
@@ -122,8 +123,9 @@ export default class EdgeDetectionConverter extends BaseConverter {
           const r = downsampledRGBA[index * 4];
           const g = downsampledRGBA[index * 4 + 1];
           const b = downsampledRGBA[index * 4 + 2];
-          // Boost luminance for better visibility on dark background
-          const boosted = this.boostLuminance(r, g, b);
+          // Apply saturation boost, then luminance boost for better visibility
+          const saturated = this.boostSaturation(r, g, b, saturationBoost);
+          const boosted = this.boostLuminance(saturated.r, saturated.g, saturated.b);
           color = `rgb(${boosted.r},${boosted.g},${boosted.b})`;
         } else {
           // Monochrome mode uses white on black
